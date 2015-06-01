@@ -101,6 +101,10 @@ class advert
         $this->description = $description;
         $this->price = $price;
     }
+    function titleChange(){
+        $title = $this->title . '-someTitle';
+        return $title;
+    }
 }
 
 if (isset($_POST['main_form_submit'])){
@@ -133,6 +137,12 @@ if (isset($_GET['id'])){
         $$key = $value;
 }
     $allow_mails = ( $allow_mails == 1) ? 'checked' : '';
+
+    // creating an object of advert class from database response 
+    // создание объекта класса advert из ответа базы данных
+    $adv = new advert($title, $description, $price);
+    echo $adv->titleChange();
+
     // пустые переменные для пустой формы
     } else {
         $title='';
