@@ -137,15 +137,12 @@ if (isset($_POST['main_form_submit'])){
         $phone = (int) $_POST['phone'];
         $email = (string) $_POST['email'];
         $allow_mails = ( isset($_POST['allow_mails']) ) ? '1' : '0';
-        $private = $_POST['private'];
+        $private = (int) $_POST['private'];
         $city = $_POST['city'];
         $metro = $_POST['metro'];
 
         $adv = new advert($title, $description, $price, $phone, $city, $metro, $allow_mails, $email, $seller_name, $private);
-        // echo $adv->plusTitle();
 
-
-        array_pop($_POST);
         $db->query('INSERT INTO adverts (title, description, price, phone, city, metro, allow_mails, email, seller_name,private) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', $adv->title, $adv->description, $adv->price, $adv->phone, $adv->city, $adv->metro, $adv->allow_mails, $adv->email, $adv->seller_name, $adv->private);
     }
 }
