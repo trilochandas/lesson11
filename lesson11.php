@@ -89,7 +89,7 @@ $smarty->assign('metro1' ,$metro);
 
 
 // processing form. oop.
-class advert
+class advert 
 {
     public $title;
     public $description;
@@ -101,18 +101,34 @@ class advert
     public $city;
     public $metro1;
 
-    function __construct($title, $description, $price, $phone, $city, $metro, $allow_mails, $email, $seller_name, $private)
+    function __construct($post)
     {
-        $this->title = $title;
-        $this->description = $description;
-        $this->price = $price;
-        $this->phone = $phone;
-        $this->city = $city;
-        $this->metro = $metro;
-        $this->allow_mails = $allow_mails;
-        $this->email = $email;
-        $this->seller_name = $seller_name;
-        $this->private = $private;
+        $this->title = $post['title'];
+        $this->description = $post['description'];
+        $this->price = $post['price'];
+        $this->phone = $post['phone'];
+        $this->city = $post['city'];
+        $this->metro = $post['metro'];
+        $this->allow_mails = $post['allow_mails'];
+        $this->email = $post['email'];
+        $this->seller_name = $post['seller_name'];
+        $this->private = $post['private'];
+    }
+
+    function save() {
+        $title = (string) $_POST['title'];
+        $description = (string) $_POST['description'];
+        $price = (int) $_POST['price'];
+        $seller_name = (string) $_POST['seller_name'];
+        $phone = (int) $_POST['phone'];
+        $email = (string) $_POST['email'];
+        $_POST['allow_mails'] = ( isset($_POST['allow_mails']) ) ? '1' : '0';
+        $private = (int) $_POST['private'];
+        $city = $_POST['city'];
+        $metro = $_POST['metro'];
+
+        $db->query('INSERT INTO adverts (title, description, price, phone, city, metro, allow_mails, email, seller_name,private) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', $adv->title, $adv->description, $adv->price, $adv->phone, $adv->city, $adv->metro, $adv->allow_mails, $adv->email, $adv->seller_name, $adv->private); 
+        
     }
 
     function plusTitle(){
@@ -130,20 +146,8 @@ if (isset($_POST['main_form_submit'])){
     if (empty($_POST['title'])) {
         $smarty->assign('error', 'Введите все данные');
     } else {
-        $title = (string) $_POST['title'];
-        $description = (string) $_POST['description'];
-        $price = (int) $_POST['price'];
-        $seller_name = (string) $_POST['seller_name'];
-        $phone = (int) $_POST['phone'];
-        $email = (string) $_POST['email'];
-        $allow_mails = ( isset($_POST['allow_mails']) ) ? '1' : '0';
-        $private = (int) $_POST['private'];
-        $city = $_POST['city'];
-        $metro = $_POST['metro'];
-
-        $adv = new advert($title, $description, $price, $phone, $city, $metro, $allow_mails, $email, $seller_name, $private);
-
-        $db->query('INSERT INTO adverts (title, description, price, phone, city, metro, allow_mails, email, seller_name,private) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', $adv->title, $adv->description, $adv->price, $adv->phone, $adv->city, $adv->metro, $adv->allow_mails, $adv->email, $adv->seller_name, $adv->private);
+        $adv = new advert($_POST);
+        $adv->save();    
     }
 }
 
