@@ -93,14 +93,32 @@ class advert
 {
     public $title;
     public $description;
-    public $price;
+    public $seller_name;
+    public $phone;
+    public $email;
+    public $allow_mails;
+    public $private;
+    public $city;
+    public $metro1;
 
-    function __construct($title, $description, $price)
+    function __construct($title, $description, $price, $phone, $city, $metro, $allow_mails, $email, $seller_name, $private)
     {
         $this->title = $title;
         $this->description = $description;
         $this->price = $price;
+        $this->phone = $phone;
+        $this->city = $city;
+        $this->metro = $metro;
+        $this->allow_mails = $allow_mails;
+        $this->email = $email;
+        $this->seller_name = $seller_name;
+        $this->private = $private;
     }
+
+    function plusTitle(){
+        return $this->title . '-someTitle';
+    }
+
     function titleChange(){
         $title = $this->title . '-someTitle';
         return $title;
@@ -115,13 +133,20 @@ if (isset($_POST['main_form_submit'])){
         $title = (string) $_POST['title'];
         $description = (string) $_POST['description'];
         $price = (int) $_POST['price'];
+        $seller_name = (string) $_POST['seller_name'];
+        $phone = (int) $_POST['phone'];
+        $email = (string) $_POST['email'];
+        $allow_mails = ( isset($_POST['allow_mails']) ) ? '1' : '0';
+        $private = $_POST['private'];
+        $city = $_POST['city'];
+        $metro = $_POST['metro'];
 
-        $adv = new advert($title, $description, $price );
-        echo $adv->plusTitle();
+        $adv = new advert($title, $description, $price, $phone, $city, $metro, $allow_mails, $email, $seller_name, $private);
+        // echo $adv->plusTitle();
 
 
         array_pop($_POST);
-        $db->query('INSERT INTO adverts (title, description, price) VALUES(?, ?, ?)', $title, $description, $price);
+        $db->query('INSERT INTO adverts (title, description, price, phone, city, metro, allow_mails, email, seller_name,private) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', $adv->title, $adv->description, $adv->price, $adv->phone, $adv->city, $adv->metro, $adv->allow_mails, $adv->email, $adv->seller_name, $adv->private);
     }
 }
 
@@ -137,12 +162,6 @@ if (isset($_GET['id'])){
         $$key = $value;
 }
     $allow_mails = ( $allow_mails == 1) ? 'checked' : '';
-
-    // creating an object of advert class from database response 
-    // создание объекта класса advert из ответа базы данных
-    $adv = new advert($title, $description, $price);
-    echo $adv->titleChange();
-
     // пустые переменные для пустой формы
     } else {
         $title='';
