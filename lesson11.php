@@ -99,21 +99,22 @@ class advert
     public $allow_mails;
     public $private;
     public $city;
-    public $metro1;
+    public $metro;
+    public $price;
 
-    function __construct($post)
-    {
-        $this->title = $post['title'];
-        $this->description = $post['description'];
-        $this->price = $post['price'];
-        $this->phone = $post['phone'];
-        $this->city = $post['city'];
-        $this->metro = $post['metro'];
-        $this->allow_mails = $post['allow_mails'];
-        $this->email = $post['email'];
-        $this->seller_name = $post['seller_name'];
-        $this->private = $post['private'];
-    }
+    // function __construct($post)
+    // {
+        // $this->title = $post['title'];
+        // $this->description = $post['description'];
+        // $this->price = $post['price'];
+        // $this->phone = $post['phone'];
+        // $this->city = $post['city'];
+        // $this->metro = $post['metro'];
+        // $this->allow_mails = $post['allow_mails'];
+        // $this->email = $post['email'];
+        // $this->seller_name = $post['seller_name'];
+        // $this->private = $post['private'];
+    // }
 
     function save() {
         $title = (string) $_POST['title'];
@@ -127,7 +128,8 @@ class advert
         $city = $_POST['city'];
         $metro = $_POST['metro'];
 
-        $db->query('INSERT INTO adverts (title, description, price, phone, city, metro, allow_mails, email, seller_name,private) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', $adv->title, $adv->description, $adv->price, $adv->phone, $adv->city, $adv->metro, $adv->allow_mails, $adv->email, $adv->seller_name, $adv->private); 
+        $db = MysqlWorker::getInstance()->connection;
+        $db->query('INSERT INTO adverts (title, description, price, phone, city, metro, allow_mails, email, seller_name,private) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)', $this->title, $this->description, $this->price, $this->phone, $this->city, $this->metro, $this->allow_mails, $this->email, $this->seller_name, $this->private); 
         
     }
 
@@ -138,6 +140,28 @@ class advert
     function titleChange(){
         $title = $this->title . '-someTitle';
         return $title;
+    }
+}
+
+class MysqlWorker
+{
+    private static $instance = NULL;
+    public $connection = NULL;
+
+    public function getInstance()
+    {
+        if( self::$instance == NULL )
+        {
+          self::$instance = new MysqlWorker();
+        }
+        return self::$instance;
+    }
+
+    private function __construct()
+    {
+        $this->connection = DbSimple_Generic::connect('mysqli://root:123@localhost/xaver');
+        $this->connection->setErrorHandler( array($this,'mysqlErrorHandler') );
+        $this->connection->query( "SET NAMES 'utf8'" );
     }
 }
 
